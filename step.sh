@@ -1,22 +1,50 @@
 #!/bin/bash
 set -ex
 
-echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
+# Required parameters
 
-#
-# --- Export Environment Variables for other Steps:
-# You can export Environment Variables for other Steps with
-#  envman, which is automatically installed by `bitrise setup`.
-# A very simple example:
-envman add --key EXAMPLE_STEP_OUTPUT --value 'the value you want to share'
-# Envman can handle piped inputs, which is useful if the text you want to
-# share is complex and you don't want to deal with proper bash escaping:
-#  cat file_with_complex_input | envman add --KEY EXAMPLE_STEP_OUTPUT
-# You can find more usage examples on envman's GitHub page
-#  at: https://github.com/bitrise-io/envman
+if [ -z "${plist_path}" ] ; then
+  echo "💥 Missing required input: plist_path 💥"
+  exit 1
+fi
+if [ ! -f "${plist_path}" ] ; then
+  echo "💥 File doesn't exist at specified Info.plist path: ${plist_path} 💥"
+  exit 1
+fi
 
-#
-# --- Exit codes:
-# The exit code of your Step is very important. If you return
-#  with a 0 exit code `bitrise` will register your Step as "successful".
-# Any non zero exit code will be registered as "failed" by `bitrise`.
+if [ -z "${plist_keys_list}" ] ; then
+  echo "💥 No key for plist specified 💥"
+  exit 1
+fi
+
+if [ -z "${plist_values_list}" ] ; then
+  echo "💥 No value for plist specified 💥"
+  exit 1
+fi
+
+# Configs
+
+CONFIG_project_info_plist_path="${plist_path}"
+
+CONFIG_plist_keys_list=()
+while read -r line; do
+   CONFIG_plist_keys_list+=("$line")
+done <<< "${plist_keys_list}"
+
+CONFIG_plist_values_list=()
+while read -r line; do
+   CONFIG_plist_values_list+=("$line")
+done <<< "${plist_values_list}"
+
+echo "ℹ️ Provided Info.plist path: ${CONFIG_project_info_plist_path}"
+echo "ℹ️ Plist Keys: ${CONFIG_plist_keys_list[*]}"
+echo "ℹ️ Plist values: ${CONFIG_plist_values_list[*]}"
+
+# verbose / debug print commands
+set -v
+
+# ---- Change Plist Values:
+for i in "${!CONFIG_plist_keys_list[@]}"; do 
+  /usr/libexec/PlistBuddy -c "Set :${CONFIG_plist_keys_list[$i]} ${CONFIG_plist_values_list[$i]}" "${CONFIG_project_info_plist_path}"
+done
+# ==> Plist value changed

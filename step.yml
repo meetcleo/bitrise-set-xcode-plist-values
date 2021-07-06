@@ -10,9 +10,9 @@
 title: |-
   Set multiple xcode plist values
 summary: |
-  Set multiple xcode plist values
+  Set multiple xcode plist values in a list
 description: |
-  Set multiple xcode plist values
+  Set multiple xcode plist values via two lists where items are separated by a newline character (\n) (for example, first value\nsecond value)
 website: https://github.com/meetcleo/bitrise-step-set-multiple-xcode-plist-values
 source_code_url: https://github.com/meetcleo/bitrise-step-set-multiple-xcode-plist-values
 support_url: https://github.com/meetcleo/bitrise-step-set-multiple-xcode-plist-values/issues
@@ -64,24 +64,21 @@ toolkit:
 
 
 inputs:
-  - example_step_input: Default Value - you can leave this empty if you want to
+  - plist_path:
     opts:
-      title: "Example Step Input"
-      summary: Summary. No more than 2-3 sentences.
+      title: "Info.plist file path"
       description: |
-        Description of this input.
-
-        Can be Markdown formatted text.
-      is_expand: true
+        Path to the given project's Info.plist file, if you are aiming for a file different then the main project's Info.plist, use the $BITRISE_SOURCE_DIR env Var as a prefix.
       is_required: true
-      value_options: []
-
-outputs:
-  - EXAMPLE_STEP_OUTPUT:
+  - plist_keys_list:
     opts:
-      title: "Example Step Output"
-      summary: Summary. No more than 2-3 sentences.
+      title: "Plist keys"
       description: |
-        Description of this output.
-
-        Can be Markdown formatted text.
+        The keys in the plist file you wish to set. Separated by a newline character (\n)
+      is_required: true
+  - plist_values_list:
+    opts:
+      title: "Plist values"
+      description: |
+        The values of the keys in the plist file you wish to set. Separated by a newline character (\n)
+      is_required: true
