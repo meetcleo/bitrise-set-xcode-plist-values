@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -exv
 
 # Required parameters
 
@@ -39,9 +39,6 @@ done <<< "${plist_values_list}"
 echo "ℹ️ Provided Info.plist path: ${CONFIG_project_info_plist_path}"
 echo "ℹ️ Plist Keys: ${CONFIG_plist_keys_list[*]}"
 echo "ℹ️ Plist values: ${CONFIG_plist_values_list[*]}"
-
-# verbose / debug print commands
-set -v
 
 # ---- Change Plist Values:
 for i in "${!CONFIG_plist_keys_list[@]}"; do 
