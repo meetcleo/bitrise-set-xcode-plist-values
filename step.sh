@@ -1,5 +1,7 @@
 #!/bin/bash
-set -exv
+set -ex
+
+echo "------START--------"
 
 # Required parameters
 
