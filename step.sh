@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 set -x
 
 echo "------START--------"
@@ -44,7 +43,14 @@ echo "ℹ️ Plist Keys: ${CONFIG_plist_keys_list[*]}"
 echo "ℹ️ Plist values: ${CONFIG_plist_values_list[*]}"
 
 # ---- Change Plist Values:
-for i in "${!CONFIG_plist_keys_list[@]}"; do 
-  /usr/libexec/PlistBuddy -c "Set :${CONFIG_plist_keys_list[$i]} ${CONFIG_plist_values_list[$i]}" "${CONFIG_project_info_plist_path}"
+for i in "${!CONFIG_plist_keys_list[@]}"; do
+  val=$(/usr/libexec/PlistBuddy -c 'print ':${CONFIG_plist_keys_list[$i]}'' "${CONFIG_project_info_plist_path}" 2>/dev/null)
+  exitCode=$? 
+
+  if (( exitCode == 0 )); then
+    /usr/libexec/PlistBuddy -c "Set :${CONFIG_plist_keys_list[$i]} ${CONFIG_plist_values_list[$i]}" "${CONFIG_project_info_plist_path}"
+  else
+    /usr/libexec/PlistBuddy -c "Add :${CONFIG_plist_keys_list[$i]} string ${CONFIG_plist_values_list[$i]}" "${CONFIG_project_info_plist_path}"
+  fi
 done
 # ==> Plist value changed
